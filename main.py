@@ -1,4 +1,5 @@
 import turtle 
+import os 
 
 game_screen = turtle.Screen()
 game_screen.title("Pong")
@@ -35,6 +36,20 @@ ball.goto(0,0)                                      #align in the center of the 
 ball.dx = 2                                         #Every time the ball moves, it moves by 2 pixels
 ball.dy = 2
 
+# scoring pen
+pen = turtle.Turtle()               # module.Class()
+pen.speed()                         #animation speed 
+pen.color("white")
+pen.penup()                         #bring up cursor to elimnate line
+pen.hideturtle()                    #we want result not to see it
+pen.goto(0, 260)
+pen.write("Player 1: 0 Player 2: 0", align="center", font=("Courier", 24, "normal"))
+
+# Scores
+score_1 = 0
+score_2 = 0
+
+
 # Functions for Paddle Movement
 def paddle_1_up():
     y = paddle_1.ycor()                              #returns the y coordinate
@@ -69,3 +84,50 @@ game_screen.onkey(paddle_2_down, "Down")                                    #whe
 # Game Loop => contains the main game content
 while True:
     game_screen.update()
+
+    # Ball Movement
+    ball.setx(ball.xcor() + ball.dx)
+    ball.sety(ball.ycor() + ball.dy)
+
+    # Establish Borders
+    if ball.ycor() > 290:
+        ball.sety(290)
+        ball.dy *= -1
+        os.system("afplay thud.mp3&")
+
+    elif ball.ycor() < -290:
+        ball.sety(-290)
+        ball.dy *= -1
+        os.system("afplay thud.mp3&")
+
+    # x borders unecessary, keeping for example 
+    elif ball.xcor() > 390:
+        ball.goto(0,0)
+        ball.dx *= -1
+        score_1 += 1
+        pen.clear()
+        pen.write("Player 1: {} Player 2: {}".format(score_1, score_2), align="center", font=("Courier", 24, "normal"))
+
+    elif ball.xcor() < -390:
+        ball.goto(0,0)
+        ball.dx *= -1
+        score_2 += 1
+        pen.clear()
+        pen.write("Player 1: {} Player 2: {}".format(score_1, score_2), align="center", font=("Courier", 24, "normal"))
+
+
+    # collision detection with paddles
+    #edges are touching, and between top of paddle and bottom of paddle
+    if (ball.xcor() > 340 and ball.xcor() < 350)  and (ball.ycor() < paddle_2.ycor() + 50 and ball.ycor() > paddle_2.ycor() - 50):
+        ball.setx(340)
+        ball.dx *= -1
+        os.system("afplay thud.mp3&")
+ 
+
+    if (ball.xcor() < -340 and ball.xcor() > -350) and (ball.ycor() < paddle_1.ycor() + 50 and ball.ycor() > paddle_1.ycor() - 50):
+        ball.setx(-340)
+        ball.dx *= -1
+        os.system("afplay thud.mp3&")
+ 
+
+#   Sound from Zapsplat.com
